@@ -1,0 +1,53 @@
+Código para inserir data e nome do lembrete
+
+
+<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import java.util.Calendar;
+
+public void agendarLembrete(String titulo, long dataEmMilissegundos) {
+    
+    Intent intent = new Intent(this, LembreteReceiver.class);
+    intent.putExtra("titulo_lembrete", titulo);
+
+   
+    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+            this, 
+            0, 
+            intent, 
+            PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+    );
+
+    AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+    if (alarmManager != null) {
+        
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, dataEmMilissegundos, pendingIntent);
+    }
+}
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.widget.Toast;
+
+public class LembreteReceiver extends BroadcastReceiver {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        String titulo = intent.getStringExtra("titulo_lembrete");
+        
+        
+        Toast.makeText(context, "LEMBRETE: " + titulo, Toast.LENGTH_LONG).show();
+    }
+}
+
+// Exemplo: Agendando para o dia 10 de Dezembro de 2025 às 10:00
+Calendar cal = Calendar.getInstance();
+cal.set(2026, Calendar.DECEMBER, 10, 10, 0); 
+
+agendarLembrete("Consulta Médica", cal.getTimeInMillis());
