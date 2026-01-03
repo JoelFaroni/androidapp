@@ -1,0 +1,41 @@
+Código que cria o repositório
+
+import java.io.File;
+import android.util.Log;
+import android.widget.Toast;
+
+public void criarPastaParaPDF(String nomeDaPasta) {
+    
+    File diretorioBase = getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS);
+    
+    
+    File novaPasta = new File(diretorioBase, nomeDaPasta);
+
+    
+    if (!novaPasta.exists()) {
+        
+        boolean criada = novaPasta.mkdirs();
+        
+        if (criada) {
+            Toast.makeText(this, "Pasta '" + nomeDaPasta + "' criada com sucesso!", Toast.LENGTH_SHORT).show();
+            Log.d("FileSystem", "Caminho: " + novaPasta.getAbsolutePath());
+        } else {
+            Toast.makeText(this, "Erro ao criar pasta.", Toast.LENGTH_SHORT).show();
+        }
+    } else {
+        Toast.makeText(this, "Esta pasta já existe!", Toast.LENGTH_SHORT).show();
+    }
+}
+
+Button btnCriar = findViewById(R.id.btnCriarPasta);
+EditText inputNome = findViewById(R.id.editNomePasta);
+
+btnCriar.setOnClickListener(v -> {
+    String nomeDigitado = inputNome.getText().toString().trim();
+    
+    if (!nomeDigitado.isEmpty()) {
+        criarPastaParaPDF(nomeDigitado);
+    } else {
+        inputNome.setError("Digite um nome para a pasta");
+    }
+});
